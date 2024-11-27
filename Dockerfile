@@ -22,8 +22,21 @@ FROM nginx:alpine
 # Copy the build output from the previous stage
 COPY --from=build /app/build /usr/share/nginx/html
 
+# Add runtime configuration script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Inject environment variables into a static JavaScript file
+RUN echo 'window.REACT_APP_API_URL="DEFAULT_URL";' > /usr/share/nginx/html/env-config.js
+
+# Ensure env-config.js is loaded in index.html
+RUN sed -i 's|</head>|<script src="env-config.js"></script></head>|' /usr/share/nginx/html/index.html
+
 # Expose port 80
 EXPOSE 80
 
-# Start nginx
+# Use entrypoint script to inject dynamic runtime environment variables
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Default command
 CMD ["nginx", "-g", "daemon off;"]
