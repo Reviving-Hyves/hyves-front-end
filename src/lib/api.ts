@@ -1,7 +1,9 @@
 import axios from "axios";
+import { config } from '../config/env';
+
 
 const api = axios.create({
-  baseURL: process.env.API_BASE_URL || "http://localhost:8002/api",
+  baseURL: config.apiUrl,
   headers: {
     "Content-Type": "application/json",
   },
