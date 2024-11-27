@@ -1,5 +1,5 @@
 const getApiUrl = () => {
-  console.log("process.env.REACT_APP_API_URL", process.env.REACT_APP_API_URL);
+  console.log("Runtime API URL:", window.REACT_APP_API_URL);
   return window.REACT_APP_API_URL || "http://localhost:8002/api";
 };
 
