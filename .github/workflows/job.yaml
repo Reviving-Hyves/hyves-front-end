@@ -4,14 +4,10 @@ on:
   push:
     branches:
       - development
-    paths:
-      - "/"
   pull_request:
     branches:
       - main
       - development
-    paths:
-      - "/"
 
 jobs:
   build-and-test:
