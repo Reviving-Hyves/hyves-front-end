@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: forevigt/hyves-front-end:latest
+          image: gcr.io/hyves-front-end/github.com/reviving-hyves/hyves-front-end
           ports:
             - containerPort: 80
           resources:
