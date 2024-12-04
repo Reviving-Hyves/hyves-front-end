@@ -26,9 +26,6 @@ COPY --from=build /app/build /usr/share/nginx/html
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Inject environment variables into a static JavaScript file
-RUN echo 'window.REACT_APP_API_URL="DEFAULT_URL";' > /usr/share/nginx/html/env-config.js
-
 # Ensure env-config.js is loaded in index.html
 RUN sed -i 's|</head>|<script src="env-config.js"></script></head>|' /usr/share/nginx/html/index.html
 
