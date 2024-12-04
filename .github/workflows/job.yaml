@@ -36,7 +36,7 @@ jobs:
 
     - name: Start backend microservice
       run: |
-        docker run -d --name backend-service -p 8002:8002 ghcr.io/reviving-hyves/hyves-back-end/auth:latest
+        docker run -d --name backend-service -p 8002:8002 https://ghcr.io/reviving-hyves/hyves-back-end/auth:latest
       env:
         DB_HOST: 127.0.0.1
         DB_PORT: 5433
