@@ -4,7 +4,11 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "es6"
+    ],
+    "types": [
+      "cypress"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -24,6 +28,7 @@
     "sourceRoot": "/"
   },
   "include": [
-    "src"
+    "src",
+    "cypress/**/*.ts"
   ]
 }

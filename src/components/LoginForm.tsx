@@ -27,6 +27,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
         <input
           {...form.register("username")}
           type="text"
+          id="username"
           className="auth-input"
           placeholder="johndoe"
         />
@@ -43,6 +44,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
         <input
           {...form.register("password")}
           type="password"
+          id="password"
           className="auth-input"
           placeholder="••••••••"
         />
