@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: forevigt/hyves-front-end:latest
+          image: gcr.io/hyves-front-end/github.com/reviving-hyves/hyves-front-end
           ports:
             - containerPort: 80
           resources:
@@ -32,6 +32,16 @@ spec:
                 secretKeyRef:
                   name: api-url
                   key: REACT_APP_API_URL
+            - name: REACT_APP_SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: sentry-dsn
+                  key: REACT_APP_SENTRY_DSN
+            - name: REACT_APP_SENTRY_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: sentry-token
+                  key: REACT_APP_SENTRY_AUTH_TOKEN
             - name: NODE_ENV
               value: "production"
 
