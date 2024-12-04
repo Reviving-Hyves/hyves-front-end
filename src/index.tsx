@@ -8,8 +8,12 @@ import { config } from "./config/env";
 
 Sentry.init({
   dsn: config.getSentryDsn,
-  tracesSampleRate: 1.0,
-  integrations: [Sentry.browserTracingIntegration()],
+  tracesSampleRate: 0.3,
+  integrations: [
+    Sentry.browserTracingIntegration(),
+    Sentry.replayCanvasIntegration(),
+    Sentry.replayIntegration(),
+  ],
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
 });
