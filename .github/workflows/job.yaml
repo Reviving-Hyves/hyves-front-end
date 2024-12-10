@@ -34,6 +34,10 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Create Docker network
+      run: |
+        docker network create hyves
+    
     - name: Start PostgreSQL container
       run: |
         docker run -d --name auth_db --network hyves -e POSTGRES_DB=auth_db -e POSTGRES_PASSWORD=pswd -e POSTGRES_USER=usr -p 5432:5432 postgres:13
