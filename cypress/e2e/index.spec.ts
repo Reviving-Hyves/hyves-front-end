@@ -1,6 +1,6 @@
 describe("Login and Dashboard Test", () => {
     it("logs in and fetches user data", () => {
-      cy.intercept('POST', 'http://localhost:8002/api/auth/login').as('loginRequest');
+      cy.intercept('POST', 'http://backend-service:8002/api/auth/login').as('loginRequest');
   
       cy.visit("http://localhost:3000/"); 
       cy.get("#username").type("wellesnick");
