@@ -42,20 +42,12 @@ jobs:
     - name: Start backend microservice
       run: |
         docker run -d --name backend-service -p 8002:8002 ghcr.io/reviving-hyves/hyves-back-end/auth:latest
-      env:
-        DB_HOST: 127.0.0.1
-        DB_PORT: 5433
-        DB_USER: usr
-        DB_PASSWORD: pswd
-        DB_NAME: auth_db
-
-    # Wait for the backend to be ready
-    - name: Wait for backend to be ready
-      run: |
-        until curl -f http://localhost:8002/api; do
-          echo "Waiting for backend..."
-          sleep 5
-        done
+      # env:
+      #   DB_HOST: 127.0.0.1
+      #   DB_PORT: 5433
+      #   DB_USER: usr
+      #   DB_PASSWORD: pswd
+      #   DB_NAME: auth_db
 
     # Start the frontend server
     - name: Start frontend application
