@@ -49,17 +49,12 @@ jobs:
       #   DB_PASSWORD: pswd
       #   DB_NAME: auth_db
 
-    # Start the frontend server
-    - name: Start frontend application
-      run: npm start &
-      env:
-        CI: true
-
     # Run Cypress E2E tests
-    - name: Run Cypress E2E tests
-      run: npx cypress run
-      env:
-        CYPRESS_BASE_URL: http://localhost:3000
+    - name: Cypress run
+      uses: cypress-io/github-action@v6
+      with:
+        build: npm run build
+        start: npm start
 
     # Stop backend container
     - name: Stop backend container
