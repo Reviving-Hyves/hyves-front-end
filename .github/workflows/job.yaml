@@ -33,29 +33,24 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Start PostgreSQL container
+      run: |
+        docker run -d --name auth_db -e POSTGRES_DB=auth_db -e POSTGRES_PASSWORD=pswd -e POSTGRES_USER=usr -p 5432:5432 postgres:13
     
     - name: Pull backend microservice image
       run: |
         docker pull ghcr.io/reviving-hyves/hyves-back-end/auth:latest
-    
 
     - name: Start backend microservice
       run: |
-        docker run -d --name backend-service -p 8002:8002 ghcr.io/reviving-hyves/hyves-back-end/auth:latest
-      # env:
-      #   DB_HOST: 127.0.0.1
-      #   DB_PORT: 5433
-      #   DB_USER: usr
-      #   DB_PASSWORD: pswd
-      #   DB_NAME: auth_db
+        docker run -d --name backend-service -p 8002:8000 -e DATABASE_ENGINE=django.db.backends.postgresql -e DATABASE_NAME=postgres -e DATABASE_USER=usr -e DATABASE_PASSWORD=pswd -e DATABASE_HOST=auth_db -e DATABASE_PORT=5432 ghcr.io/reviving-hyves/hyves-back-end/auth:latest
 
-    # Run Cypress E2E tests
     - name: Cypress run
       uses: cypress-io/github-action@v6
       with:
         build: npm run build
         start: npm start
 
-    # Stop backend container
     - name: Stop backend container
       run: docker stop backend-service && docker rm backend-service
