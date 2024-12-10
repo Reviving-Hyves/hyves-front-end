@@ -1,5 +1,6 @@
 name: Hyves React Front-end
 run-name: "${{ github.actor }} ran ${{ github.workflow }} on ${{ github.ref_name }}"
+
 on:
   push:
     branches:
@@ -22,58 +23,45 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
-    
+        
     - name: Install dependencies
       run: npm ci
-    
-    #- name: Run linter
-    #  run: npm run lint
-    
-    #- name: Run tests
-    #  run: npm test
-    
-    - name: Build project
-      run: npm run build
 
-  docker-build:
-    needs: build-and-test
-    runs-on: ubuntu-latest
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Docker network
+      run: |
+        docker network create hyves
     
-    if: github.base_ref != 'main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Build docker image
-        run: |
-          docker build -t 'ghcr.io/reviving-hyves/hyves-front-end' -f Dockerfile .
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.TOKEN }}
-  
-      - name: Push Docker Image
-        run: docker push ghcr.io/reviving-hyves/hyves-front-end
-
-
-  # deployment job
-  # deploy:
-  #   needs: docker-build
-  #   runs-on: ubuntu-latest
-  #   if: github.ref == 'refs/heads/main'
+    - name: Start PostgreSQL container
+      run: |
+        docker run -d --name auth_db --network hyves -e POSTGRES_DB=auth_db -e POSTGRES_PASSWORD=pswd -e POSTGRES_USER=usr -p 5432:5432 postgres:13
     
-  #   steps:
-  #   - name: Deploy to production
-  #     uses: appleboy/ssh-action@master
-  #     with:
-  #       host: ${{ secrets.SERVER_HOST }}
-  #       username: ${{ secrets.SERVER_USERNAME }}
-  #       key: ${{ secrets.SERVER_SSH_KEY }}
-  #       script: |
-  #         docker pull ${{ secrets.DOCKERHUB_USERNAME }}/react-app:latest
-  #         docker stop react-app || true
-  #         docker rm react-app || true
-  #         docker run -d --name react-app -p 3000:80 ${{ secrets.DOCKERHUB_USERNAME }}/react-app:latest
+    - name: Pull backend microservice image
+      run: |
+        docker pull ghcr.io/reviving-hyves/hyves-back-end/auth:latest
+        
+    - name: Start auth microservice
+      run: |
+        docker run -d --name auth --network hyves -p 8002:8000 -e DJANGO_ENV=production -e DATABASE_ENGINE=django.db.backends.postgresql -e DATABASE_NAME=postgres -e DATABASE_USER=usr -e DATABASE_PASSWORD=pswd -e DATABASE_HOST=auth_db -e DATABASE_PORT=5432 ghcr.io/reviving-hyves/hyves-back-end/auth:latest
+
+    - name: Show logs
+      run: docker logs auth_db && docker logs auth
+        
+    - name: Cypress run
+      continue-on-error: true
+      uses: cypress-io/github-action@v6
+      with:
+        build: npm run build
+        start: npm start
+
+    - name: Stop auth container
+      run: docker stop auth && docker rm auth
+
+    - name: Stop database container
+      run: docker stop auth_db && docker rm auth_db
