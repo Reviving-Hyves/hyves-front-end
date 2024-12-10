@@ -60,6 +60,8 @@ jobs:
         build: npm run build
         start: npm start
 
+    - name: Stop auth container
+      run: docker stop auth && docker rm auth
 
-    - name: Stop backend container
-      run: docker stop backend-service && docker rm backend-service
+    - name: Stop database container
+      run: docker stop auth_db && docker rm auth_db
